@@ -9,7 +9,9 @@ module.exports = function(app) {
     // todoList Routes
     app.route(`${apiRoot}characters`)
         .get((req, res) => {
-            getCharacters().then(characters => {
+            let parameters = {};
+            parameters.name = req.query ? req.query.name : undefined;
+            getCharacters(parameters).then(characters => {
                 res.status(200).json({
                     status: 'success',
                     data: {

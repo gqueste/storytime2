@@ -15,11 +15,17 @@ function getCharacterCollection() {
     })
 }
 
-function getCharacters() {
+function getCharacters(parameters) {
     let currentDB;
     return getCharacterCollection().then(({ db, charactersCollection }) => {
         currentDB = db;
-        return charactersCollection.find({}).toArray();
+        let query = {};
+        if (parameters.name) {
+            query.name = {
+                $regex: parameters.name
+            };
+        }
+        return charactersCollection.find(query).toArray();
     }).then(characters => {
         currentDB.close();
         return Promise.resolve(characters);
