@@ -3,7 +3,8 @@
 const { 
     getCharacters,
     insertCharacter,
-    getCharacterById
+    getCharacterById,
+    updateCharacter
 } = require('../models/characters');
 
 const apiRoot = "/api/v1/";
@@ -62,5 +63,28 @@ module.exports = function(app) {
                     });
                 }
             });
+        })
+        .put((req, res) => {
+            const characterId = req.params.character_id;
+            const params = {};
+            if (req.body.name) params.name = req.body.name;
+            updateCharacter(characterId, params).then(character => {
+                res.status(200).json({
+                    status: 'success',
+                    character
+                });
+            }).catch(error => {
+                if (error.status) {
+                    res.status(error.status).json({
+                        status: 'failure',
+                        message: error.message
+                    });
+                } else {
+                    //TODO must serve for other errors than 404
+                    res.status(500).json({
+                        message: error
+                    });
+                }
+            })
         });
 };

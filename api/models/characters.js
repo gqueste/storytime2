@@ -69,9 +69,35 @@ function getCharacterById(character_id) {
     });
 }
 
+function updateCharacter(character_id, params) {
+    let currentDB;
+    return getCharacterCollection().then(({ db, charactersCollection }) => {
+        currentDB = db;
+        let query = {};
+        if (character_id) { //TODO Handle if undefined : throw error
+            query['_id'] = new ObjectId(character_id);
+        }
+        return charactersCollection.findOneAndUpdate(
+            query,
+            { $set: params },
+            { returnOriginal: false }
+        );
+    }).then(updatedCharacter => {
+        currentDB.close();
+        return Promise.resolve(updatedCharacter.value);
+    }).catch(() => {
+        //TODO handle other errors. If bdd not accessible, it's not an id problem
+        throw ({
+            status: 404,
+            message: 'incorrect id'
+        });
+    });
+}
+
 
 module.exports = {
     getCharacters,
     insertCharacter,
-    getCharacterById
+    getCharacterById,
+    updateCharacter
 };
