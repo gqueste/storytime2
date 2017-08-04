@@ -1,12 +1,15 @@
 'use strict';
 
-const { getCharacters, insertCharacter } = require('../models/characters');
+const { 
+    getCharacters,
+    insertCharacter,
+    getCharacterById
+} = require('../models/characters');
 
 const apiRoot = "/api/v1/";
 
 module.exports = function(app) {
 
-    // todoList Routes
     app.route(`${apiRoot}characters`)
         .get((req, res) => {
             let parameters = {};
@@ -35,5 +38,29 @@ module.exports = function(app) {
             }).catch(error => res.status(500).json({
                 message: error
             }));
+        });
+
+    app.route(`${apiRoot}characters/:character_id`)
+        .get((req, res) => {
+            const characterId = req.params.character_id;
+            getCharacterById(characterId).then(character => {
+                res.status(200).json({
+                    status: 'success',
+                    character
+                });  
+            })
+            .catch(error => {
+                if (error.status) {
+                    res.status(error.status).json({
+                        status: 'failure',
+                        message: error.message
+                    });
+                } else {
+                    //TODO must serve for other errors than 404
+                    res.status(500).json({
+                        message: error
+                    });
+                }
+            });
         });
 };
