@@ -13,3 +13,5 @@ routes(app);
 app.listen(port);
 
 console.log('storytime RESTful API server started on: ' + port);
+
+module.exports = app; // for testing
