@@ -94,10 +94,32 @@ function updateCharacter(character_id, params) {
     });
 }
 
+function deleteCharacter(character_id) {
+    let currentDB;
+    return getCharacterCollection().then(({ db, charactersCollection }) => {
+        currentDB = db;
+        let query = {};
+        if (character_id) {
+            query['_id'] = new ObjectId(character_id);
+        }
+        return charactersCollection.findOneAndDelete(query);
+    }).then(result => {
+        currentDB.close();
+        return Promise.resolve(result.value);
+    }).catch(() => {
+        //TODO handle other errors. If bdd not accessible, it's not an id problem
+        throw ({
+            status: 404,
+            message: 'incorrect id'
+        });
+    })
+}
+
 
 module.exports = {
     getCharacters,
     insertCharacter,
     getCharacterById,
-    updateCharacter
+    updateCharacter,
+    deleteCharacter
 };
