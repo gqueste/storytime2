@@ -35,6 +35,15 @@ describe('Characters', () => {
                     done();
                 });
         });
+        it('it should search on name', (done) => {
+            chai.request(server)
+                .get('/api/v1/characters?name=')
+                .end((err, res) => {
+                    testGetAllCharacters(res);
+                    currentLength = res.body.data.characters.length;
+                    done();
+                });
+        });
     });
     /*
      * Test the /POST route
@@ -67,7 +76,89 @@ describe('Characters', () => {
                 });
         });
     });
+    describe('/GET characters Search', () => {
+        it('it should search on name', (done) => {
+            chai.request(server)
+                .get('/api/v1/characters?name=Test')
+                .end((err, res) => {
+                    testGetAllCharacters(res);
+                    res.body.data.characters.length.should.be.eql(1);
+                    done();
+                });
+        });
+        it('it should send no characters if failed search', (done) => {
+            chai.request(server)
+                .get('/api/v1/characters?name=edeeede')
+                .end((err, res) => {
+                    testGetAllCharacters(res);
+                    res.body.data.characters.length.should.be.eql(0);
+                    done();
+                });
+        });
+    });
+    describe('/GET characters/:id', () => {
+        it('it should GET the character', (done) => {
+            chai.request(server)
+                .get(`/api/v1/characters/${insertedCharacterId}`)
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.be.a('object');
+                    res.body.should.have.property('status');
+                    res.body.should.have.property('character');
+                    res.body.character.should.be.a('object');
+                    res.body.character.should.have.property('_id');
+                    res.body.character['_id'].should.be.eql(insertedCharacterId);
+                    done();
+                });
+        });
+        it('it should return an error if there is no character', (done) => {
+            chai.request(server)
+                .get(`/api/v1/characters/${insertedCharacterId}12345`)
+                .end((err, res) => {
+                    res.should.have.status(404);
+                    done();
+                });
+        });
+    });
+    describe('/PUT characters/:id', () => {
+        it('it should change the character', (done) => {
+            let query = {
+                name: 'Test2'
+            };
+            chai.request(server)
+                .put(`/api/v1/characters/${insertedCharacterId}`)
+                .send(query)
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.be.a('object');
+                    res.body.should.have.property('status');
+                    res.body.should.have.property('character');
+                    res.body.character.should.be.a('object');
+                    res.body.character.should.have.property('_id');
+                    res.body.character['_id'].should.be.eql(insertedCharacterId);
+                    res.body.character.should.have.property('name');
+                    res.body.character.name.should.be.eql(query.name);
+                    done();
+                });
+        });
+        it('it should return an error if there is no character', (done) => {
+            chai.request(server)
+                .put(`/api/v1/characters/${insertedCharacterId}12345`)
+                .end((err, res) => {
+                    res.should.have.status(404);
+                    done();
+                });
+        });
+    });
     describe('/DELETE characters/:id', () => {
+        it('it should throw an error for no character', (done) => {
+            chai.request(server)
+                .delete(`/api/v1/characters/${insertedCharacterId}1234`)
+                .end((err, res) => {
+                    res.should.have.status(404);
+                    done();
+                });
+        });
         it('it should DELETE a character', (done) => {
            chai.request(server)
                .delete(`/api/v1/characters/${insertedCharacterId}`)
