@@ -31,6 +31,18 @@ function getTags() {
     });
 }
 
+function insertTag(tag) {
+    let currentDB;
+    return getTagCollection().then(({db, tagsCollection}) => {
+        currentDB = db;
+        return tagsCollection.insertOne(tag);
+    }).then(r => {
+        currentDB.close();
+        return Promise.resolve(r.ops[0]);
+    });
+}
+
 module.exports = {
-    getTags
+    getTags,
+    insertTag
 };

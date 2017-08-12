@@ -9,7 +9,8 @@ const {
 } = require('../models/characters');
 
 const {
-    getTags
+    getTags,
+    insertTag
 } = require('../models/tags');
 
 const apiRoot = "/api/v1/";
@@ -125,4 +126,17 @@ module.exports = function(app) {
                 message: error
             }));
         })
+        .post((req, res) => {
+            const newTag = {
+                title: req.body.title
+            };
+            insertTag(newTag).then(tag => {
+                res.status(200).json({
+                    status: 'success',
+                    tag
+                });
+            }).catch(error => res.status(500).json({
+                message: error
+            }));
+        });
 };
