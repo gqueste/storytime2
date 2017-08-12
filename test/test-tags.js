@@ -61,4 +61,29 @@ describe('Tags', () => {
                 });
         });
     });
+
+    describe('/GET tags/:id', () => {
+        it('it should GET the tag', (done) => {
+            chai.request(server)
+                .get(`/api/v1/tags/${insertedTagId}`)
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.be.a('object');
+                    res.body.should.have.property('status');
+                    res.body.should.have.property('tag');
+                    res.body.tag.should.be.a('object');
+                    res.body.tag.should.have.property('_id');
+                    res.body.tag['_id'].should.be.eql(insertedTagId);
+                    done();
+                });
+        });
+        it('it should return an error if there is no tag', (done) => {
+            chai.request(server)
+                .get(`/api/v1/tags/${insertedTagId}12345`)
+                .end((err, res) => {
+                    res.should.have.status(404);
+                    done();
+                });
+        });
+    });
 });

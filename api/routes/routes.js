@@ -10,7 +10,8 @@ const {
 
 const {
     getTags,
-    insertTag
+    insertTag,
+    getTagById
 } = require('../models/tags');
 
 const apiRoot = "/api/v1/";
@@ -139,4 +140,28 @@ module.exports = function(app) {
                 message: error
             }));
         });
+
+    app.route(`${apiRoot}tags/:tag_id`)
+        .get((req, res) => {
+            const tagId = req.params.tag_id;
+            getTagById(tagId).then(tag => {
+                res.status(200).json({
+                    status: 'success',
+                    tag
+                });
+            })
+                .catch(error => {
+                    if (error.status) {
+                        res.status(error.status).json({
+                            status: 'failure',
+                            message: error.message
+                        });
+                    } else {
+                        //TODO must serve for other errors than 404
+                        res.status(500).json({
+                            message: error
+                        });
+                    }
+                });
+        })
 };

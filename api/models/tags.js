@@ -42,7 +42,29 @@ function insertTag(tag) {
     });
 }
 
+function getTagById(tag_id) {
+    let currentDB;
+    return getTagCollection().then(({ db, tagsCollection }) => {
+        currentDB = db;
+        let query = {};
+        if (tag_id) { //TODO Handle if undefined : throw error
+            query['_id'] = new ObjectId(tag_id);
+        }
+        return tagsCollection.find(query).next();
+    }).then(tag => {
+        currentDB.close();
+        return Promise.resolve(tag);
+    }).catch(() => {
+        //TODO handle other errors. If bdd not accessible, it's not an id problem
+        throw ({
+            status: 404,
+            message: 'incorrect id'
+        });
+    });
+}
+
 module.exports = {
     getTags,
-    insertTag
+    insertTag,
+    getTagById
 };
