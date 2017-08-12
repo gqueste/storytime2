@@ -8,6 +8,10 @@ const {
     deleteCharacter
 } = require('../models/characters');
 
+const {
+    getTags
+} = require('../models/tags');
+
 const apiRoot = "/api/v1/";
 
 module.exports = function(app) {
@@ -109,4 +113,16 @@ module.exports = function(app) {
                 }
             })
         });
+
+    app.route(`${apiRoot}tags`)
+        .get((req, res) => {
+            getTags().then(tags => {
+                res.status(200).json({
+                    status: 'success',
+                    tags
+                });
+            }).catch(error => res.status(500).json({
+                message: error
+            }));
+        })
 };
