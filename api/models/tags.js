@@ -20,11 +20,17 @@ function getTagCollection() {
     })
 }
 
-function getTags() {
+function getTags(parameters) {
     let currentDB;
     return getTagCollection().then(({ db, tagsCollection }) => {
         currentDB = db;
-        return tagsCollection.find().toArray();
+        let query = {};
+        if (parameters.title) {
+            query.title = {
+                $regex: parameters.title
+            };
+        }
+        return tagsCollection.find(query).toArray();
     }).then(characters => {
         currentDB.close();
         return Promise.resolve(characters);
@@ -63,8 +69,56 @@ function getTagById(tag_id) {
     });
 }
 
+function updateTag(tag_id, params) {
+    let currentDB;
+    return getTagCollection().then(({ db, tagsCollection }) => {
+        currentDB = db;
+        let query = {};
+        if (tag_id) { //TODO Handle if undefined : throw error
+            query['_id'] = new ObjectId(tag_id);
+        }
+        return tagsCollection.findOneAndUpdate(
+            query,
+            { $set: params },
+            { returnOriginal: false }
+        );
+    }).then(updatedTag => {
+        currentDB.close();
+        return Promise.resolve(updatedTag.value);
+    }).catch(() => {
+        //TODO handle other errors. If bdd not accessible, it's not an id problem
+        throw ({
+            status: 404,
+            message: 'incorrect id'
+        });
+    });
+}
+
+function deleteTag(tag_id) {
+    let currentDB;
+    return getTagCollection().then(({ db, tagsCollection }) => {
+        currentDB = db;
+        let query = {};
+        if (tag_id) {
+            query['_id'] = new ObjectId(tag_id);
+        }
+        return tagsCollection.findOneAndDelete(query);
+    }).then(result => {
+        currentDB.close();
+        return Promise.resolve(result.value);
+    }).catch(() => {
+        //TODO handle other errors. If bdd not accessible, it's not an id problem
+        throw ({
+            status: 404,
+            message: 'incorrect id'
+        });
+    })
+}
+
 module.exports = {
     getTags,
     insertTag,
-    getTagById
+    getTagById,
+    updateTag,
+    deleteTag
 };

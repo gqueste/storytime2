@@ -11,13 +11,18 @@ const {
 const {
     getTags,
     insertTag,
-    getTagById
+    getTagById,
+    updateTag,
+    deleteTag
 } = require('../models/tags');
 
 const apiRoot = "/api/v1/";
 
 module.exports = function(app) {
 
+    /**
+     * CHARACTERS
+     */
     app.route(`${apiRoot}characters`)
         .get((req, res) => {
             let parameters = {};
@@ -114,9 +119,15 @@ module.exports = function(app) {
             })
         });
 
+
+    /**
+     * TAGS
+     */
     app.route(`${apiRoot}tags`)
         .get((req, res) => {
-            getTags().then(tags => {
+            let parameters = {};
+            parameters.title = req.query ? req.query.title : undefined;
+            getTags(parameters).then(tags => {
                 res.status(200).json({
                     status: 'success',
                     tags
@@ -147,19 +158,62 @@ module.exports = function(app) {
                     status: 'success',
                     tag
                 });
-            })
-                .catch(error => {
-                    if (error.status) {
-                        res.status(error.status).json({
-                            status: 'failure',
-                            message: error.message
-                        });
-                    } else {
-                        //TODO must serve for other errors than 404
-                        res.status(500).json({
-                            message: error
-                        });
-                    }
-                });
+            }).catch(error => {
+                if (error.status) {
+                    res.status(error.status).json({
+                        status: 'failure',
+                        message: error.message
+                    });
+                } else {
+                    //TODO must serve for other errors than 404
+                    res.status(500).json({
+                        message: error
+                    });
+                }
+            });
         })
+        .put((req, res) => {
+            const tagId = req.params.tag_id;
+            const params = {};
+            if (req.body.title) params.title = req.body.title;
+            updateTag(tagId, params).then(tag => {
+                res.status(200).json({
+                    status: 'success',
+                    tag
+                });
+            }).catch(error => {
+                if (error.status) {
+                    res.status(error.status).json({
+                        status: 'failure',
+                        message: error.message
+                    });
+                } else {
+                    //TODO must serve for other errors than 404
+                    res.status(500).json({
+                        message: error
+                    });
+                }
+            })
+        })
+        .delete((req, res) => {
+            const tagId = req.params.tag_id;
+            deleteTag(tagId).then(tag => {
+                res.status(200).json({
+                    status: 'success',
+                    tag
+                });
+            }).catch(error => {
+                if (error.status) {
+                    res.status(error.status).json({
+                        status: 'failure',
+                        message: error.message
+                    });
+                } else {
+                    //TODO must serve for other errors than 404
+                    res.status(500).json({
+                        message: error
+                    });
+                }
+            })
+        });
 };
