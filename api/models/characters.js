@@ -122,6 +122,31 @@ function getCharacterTags(character_id) {
     });
 }
 
+function insertTagForCharacter(character_id, tag) {
+    let currentDB;
+    return getCharacterCollection().then(({ db, charactersCollection }) => {
+        currentDB = db;
+        let query = {};
+        if (character_id) { //TODO Handle if undefined : throw error
+            query['_id'] = new ObjectId(character_id);
+        }
+        return charactersCollection.findOneAndUpdate(
+            query,
+            { $push: { tags : tag } },
+            { returnOriginal: false }
+        );
+    }).then(updatedCharacter => {
+        currentDB.close();
+        return Promise.resolve(updatedCharacter.value);
+    }).catch(() => {
+        //TODO handle other errors. If bdd not accessible, it's not an id problem
+        throw ({
+            status: 404,
+            message: 'incorrect id'
+        });
+    });
+}
+
 
 module.exports = {
     getCharacters,
@@ -129,5 +154,6 @@ module.exports = {
     getCharacterById,
     updateCharacter,
     deleteCharacter,
-    getCharacterTags
+    getCharacterTags,
+    insertTagForCharacter
 };
