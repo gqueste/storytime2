@@ -70,6 +70,7 @@ function getTagById(tag_id) {
 }
 
 function updateTag(tag_id, params) {
+    //TODO should also update in all characters
     let currentDB;
     return getTagCollection().then(({ db, tagsCollection }) => {
         currentDB = db;
@@ -95,6 +96,7 @@ function updateTag(tag_id, params) {
 }
 
 function deleteTag(tag_id) {
+    //TODO should also remove from all characters
     let currentDB;
     return getTagCollection().then(({ db, tagsCollection }) => {
         currentDB = db;

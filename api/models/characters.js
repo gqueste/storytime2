@@ -41,6 +41,7 @@ function insertCharacter(character) {
     let currentDB;
     return getCharacterCollection().then(({db, charactersCollection}) => {
         currentDB = db;
+        character.tags = [];
         return charactersCollection.insertOne(character);
     }).then(r => {
         currentDB.close();
@@ -115,11 +116,18 @@ function deleteCharacter(character_id) {
     })
 }
 
+function getCharacterTags(character_id) {
+    return getCharacterById(character_id).then(character => {
+        return Promise.resolve(character.tags);
+    });
+}
+
 
 module.exports = {
     getCharacters,
     insertCharacter,
     getCharacterById,
     updateCharacter,
-    deleteCharacter
+    deleteCharacter,
+    getCharacterTags
 };

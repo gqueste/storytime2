@@ -61,6 +61,9 @@ describe('Characters', () => {
                     res.body.should.have.property('status');
                     res.body.should.have.property('character');
                     res.body.character.should.be.a('object');
+                    res.body.character.should.have.property('tags');
+                    res.body.character.tags.should.be.a('array');
+                    res.body.character.tags.length.should.be.eql(0);
                     insertedCharacterId = res.body.character['_id'];
                     done();
                 });
@@ -149,6 +152,34 @@ describe('Characters', () => {
                 });
         });
     });
+
+
+    describe('/GET characters/:id/tags', () => {
+        it('it should throw an error for no character', (done) => {
+            chai.request(server)
+                .get(`/api/v1/characters/${insertedCharacterId}1234/tags`)
+                .end((err, res) => {
+                    res.should.have.status(404);
+                    done();
+                });
+        });
+        it('it should return all the tags from this character', (done) => {
+            chai.request(server)
+                .get(`/api/v1/characters/${insertedCharacterId}/tags`)
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.be.a('object');
+                    res.body.should.have.property('status');
+                    res.body.should.have.property('tags');
+                    res.body.tags.should.be.a('array');
+                    res.body.tags.length.should.be.eql(0);
+                    done();
+                });
+        });
+    });
+    
+    
+    
     describe('/DELETE characters/:id', () => {
         it('it should throw an error for no character', (done) => {
             chai.request(server)
