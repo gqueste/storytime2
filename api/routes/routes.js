@@ -8,7 +8,8 @@ const {
     deleteCharacter,
     getCharacterTags,
     insertTagForCharacter,
-    getCharacterTag
+    getCharacterTag,
+    deleteTagForCharacter
 } = require('../models/characters');
 
 const {
@@ -292,4 +293,26 @@ module.exports = function(app) {
                 }
             });
         })
+        .delete((req, res) => {
+            const characterId = req.params.character_id;
+            const tagId = req.params.tag_id;
+            deleteTagForCharacter(characterId, tagId).then(character => {
+                res.status(200).json({
+                    status: 'success',
+                    character
+                });
+            }).catch(error => {
+                if (error.status) {
+                    res.status(error.status).json({
+                        status: 'failure',
+                        message: error.message
+                    });
+                } else {
+                    //TODO must serve for other errors than 404
+                    res.status(500).json({
+                        message: error
+                    });
+                }
+            });
+        });
 };

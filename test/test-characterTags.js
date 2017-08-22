@@ -138,7 +138,35 @@ describe('Character Tags', () => {
         });
     });
 
-    //TODO delete tag from character
+    describe('/DELETE characters/:character_id/tags/:tag_id', () => {
+        it('it should throw an error for no character', (done) => {
+            chai.request(server)
+                .delete(`/api/v1/characters/${insertedCharacterId}1234/tags/${insertedTagId}`)
+                .end((err, res) => {
+                    res.should.have.status(404);
+                    done();
+                });
+        });
+        //TODO problem with character but no existing tag. Maybe 2 queries necessary
+        it('it should delete the tag', (done) => {
+            chai.request(server)
+                .delete(`/api/v1/characters/${insertedCharacterId}/tags/${insertedTagId}`)
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.be.a('object');
+                    res.body.should.have.property('status');
+                    res.body.should.have.property('character');
+                    res.body.character.should.be.a('object');
+                    res.body.character.should.have.property('_id');
+                    res.body.character['_id'].should.be.eql(insertedCharacterId);
+                    res.body.character.should.have.property('tags');
+                    res.body.character.tags.should.be.a('array');
+                    res.body.character.tags.length.should.be.eql(0);
+                    done();
+                });
+        });
+    });
+
     //TODO get all characters with tag title
 
 });
