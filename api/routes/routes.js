@@ -7,7 +7,8 @@ const {
     updateCharacter,
     deleteCharacter,
     getCharacterTags,
-    insertTagForCharacter
+    insertTagForCharacter,
+    getCharacterTag
 } = require('../models/characters');
 
 const {
@@ -267,4 +268,28 @@ module.exports = function(app) {
                 }
             });
         });
+
+    app.route(`${apiRoot}characters/:character_id/tags/:tag_id`)
+        .get((req, res) => {
+            const characterId = req.params.character_id;
+            const tagId = req.params.tag_id;
+            getCharacterTag(characterId, tagId).then(tag => {
+                res.status(200).json({
+                    status: 'success',
+                    tag
+                });
+            }).catch(error => {
+                if (error.status) {
+                    res.status(error.status).json({
+                        status: 'failure',
+                        message: error.message
+                    });
+                } else {
+                    //TODO must serve for other errors than 404
+                    res.status(500).json({
+                        message: error
+                    });
+                }
+            });
+        })
 };

@@ -147,6 +147,24 @@ function insertTagForCharacter(character_id, tag) {
     });
 }
 
+function getCharacterTag(character_id, tag_id) {
+    function getCorrectTag(tag) {
+        return tag['_id'] === tag_id;
+    }
+
+    return getCharacterById(character_id).then(character => {
+        const tagWanted = character.tags.find(getCorrectTag);
+        if (tagWanted) {
+            return Promise.resolve(tagWanted);
+        } else {
+            throw ({
+                status: 404,
+                message: 'incorrect tag id'
+            });
+        }
+    });
+}
+
 
 module.exports = {
     getCharacters,
@@ -155,5 +173,6 @@ module.exports = {
     updateCharacter,
     deleteCharacter,
     getCharacterTags,
-    insertTagForCharacter
+    insertTagForCharacter,
+    getCharacterTag
 };

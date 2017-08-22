@@ -76,15 +76,15 @@ describe('Character Tags', () => {
     });
 
     describe('/POST characters/:id/tags', () => {
-            it('it should throw an error for no character', (done) => {
-                chai.request(server)
-                    .post(`/api/v1/characters/${insertedCharacterId}1234/tags`)
-                    .send(insertedTag)
-                    .end((err, res) => {
-                        res.should.have.status(404);
-                        done();
-                    });
-            });
+        it('it should throw an error for no character', (done) => {
+            chai.request(server)
+                .post(`/api/v1/characters/${insertedCharacterId}1234/tags`)
+                .send(insertedTag)
+                .end((err, res) => {
+                    res.should.have.status(404);
+                    done();
+                });
+        });
         it('it should insert the tag for this character', (done) => {
             chai.request(server)
                 .post(`/api/v1/characters/${insertedCharacterId}/tags`)
@@ -103,9 +103,42 @@ describe('Character Tags', () => {
                     done();
                 });
         });
-        
     });
 
-    
+    describe('/GET characters/:character_id/tags/:tag_id', () => {
+        it('it should throw an error for no character', (done) => {
+            chai.request(server)
+                .get(`/api/v1/characters/${insertedCharacterId}1234/tags/${insertedTagId}`)
+                .end((err, res) => {
+                    res.should.have.status(404);
+                    done();
+                });
+        });
+        it('it should throw an error for no tag', (done) => {
+            chai.request(server)
+                .get(`/api/v1/characters/${insertedCharacterId}/tags/${insertedTagId}1234`)
+                .end((err, res) => {
+                    res.should.have.status(404);
+                    done();
+                });
+        });
+        it('it should retrieve the tag', (done) => {
+            chai.request(server)
+                .get(`/api/v1/characters/${insertedCharacterId}/tags/${insertedTagId}`)
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.be.a('object');
+                    res.body.should.have.property('status');
+                    res.body.should.have.property('tag');
+                    res.body.tag.should.be.a('object');
+                    res.body.tag.should.have.property('_id');
+                    res.body.tag['_id'].should.be.eql(insertedTag['_id']);
+                    done();
+                });
+        });
+    });
+
+    //TODO delete tag from character
+    //TODO get all characters with tag title
 
 });
