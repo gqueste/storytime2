@@ -14,9 +14,8 @@ function testGetAllCharacters(res) {
     res.should.have.status(200);
     res.body.should.be.a('object');
     res.body.should.have.property('status');
-    res.body.should.have.property('data');
-    res.body.data.should.have.property('characters');
-    res.body.data.characters.should.be.a('array');
+    res.body.should.have.property('characters');
+    res.body.characters.should.be.a('array');
 }
 
 
@@ -31,7 +30,7 @@ describe('Characters', () => {
                 .get('/api/v1/characters')
                 .end((err, res) => {
                     testGetAllCharacters(res);
-                    currentLength = res.body.data.characters.length;
+                    currentLength = res.body.characters.length;
                     done();
                 });
         });
@@ -40,7 +39,7 @@ describe('Characters', () => {
                 .get('/api/v1/characters?name=')
                 .end((err, res) => {
                     testGetAllCharacters(res);
-                    currentLength = res.body.data.characters.length;
+                    currentLength = res.body.characters.length;
                     done();
                 });
         });
@@ -71,7 +70,7 @@ describe('Characters', () => {
                 .get('/api/v1/characters')
                 .end((err, res) => {
                     testGetAllCharacters(res);
-                    res.body.data.characters.length.should.be.eql(currentLength + 1);
+                    res.body.characters.length.should.be.eql(currentLength + 1);
                     done();
                 });
         });
@@ -82,7 +81,7 @@ describe('Characters', () => {
                 .get('/api/v1/characters?name=Test')
                 .end((err, res) => {
                     testGetAllCharacters(res);
-                    res.body.data.characters.length.should.be.eql(1);
+                    res.body.characters.length.should.be.eql(1);
                     done();
                 });
         });
@@ -91,7 +90,7 @@ describe('Characters', () => {
                 .get('/api/v1/characters?name=edeeede')
                 .end((err, res) => {
                     testGetAllCharacters(res);
-                    res.body.data.characters.length.should.be.eql(0);
+                    res.body.characters.length.should.be.eql(0);
                     done();
                 });
         });
@@ -178,7 +177,7 @@ describe('Characters', () => {
                 .get('/api/v1/characters')
                 .end((err, res) => {
                     testGetAllCharacters(res);
-                    res.body.data.characters.length.should.be.eql(currentLength);
+                    res.body.characters.length.should.be.eql(currentLength);
                     done();
                 });
         });

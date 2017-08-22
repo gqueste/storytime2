@@ -25,9 +25,7 @@ module.exports = function(app) {
             getCharacters(parameters).then(characters => {
                 res.status(200).json({
                     status: 'success',
-                    data: {
-                        characters
-                    }
+                    characters
                 });
             })
             .catch(error => res.status(500).json({
