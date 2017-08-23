@@ -30,6 +30,11 @@ function getCharacters(parameters) {
                 $regex: parameters.name
             };
         }
+        if (parameters.tagId) {
+            query = {
+                'tags._id' : parameters.tagId
+            }
+        }
         return charactersCollection.find(query).toArray();
     }).then(characters => {
         currentDB.close();

@@ -10,6 +10,8 @@ let should = chai.should();
 
 chai.use(chaiHttp);
 
+let insertedCharacters = [];
+let insertedTags = [];
 let insertedCharacterId;
 let insertedTagId;
 let insertedTag;
@@ -18,35 +20,53 @@ let insertedTag;
 describe('Character Tags', () => {
 
     // Insert new test data
-    before(() => {
-        let character = {
-            name: "Character1"
-        };
-        chai.request(server)
-            .post('/api/v1/characters')
-            .send(character)
-            .end((err, res) => {
-                insertedCharacterId = res.body.character['_id'];
-            });
-        let tag = {
-            title: "Tag1"
-        };
-        chai.request(server)
-            .post('/api/v1/tags')
-            .send(tag)
-            .end((err, res) => {
-                insertedTagId = res.body.tag['_id'];
-                insertedTag = res.body.tag;
-            });
+    before((done) => {
+        const promises = [];
+
+        // insert characters
+        for (let i = 1; i <= 3; i++) {
+            let character = {
+                name: `Character${i}`
+            };
+            promises.push(chai.request(server).post('/api/v1/characters').send(character).then((res) => {
+                insertedCharacters.push(res.body.character);
+                return Promise.resolve();
+            }));
+        }
+
+        // insert tags
+        for (let i = 1; i <= 2; i++) {
+            let tag = {
+                title: `Tag${i}`
+            };
+            promises.push(chai.request(server).post('/api/v1/tags').send(tag).then((res) => {
+                insertedTags.push(res.body.tag);
+                return Promise.resolve();
+            }));
+        }
+
+
+        Promise.all(promises).then(() => {
+            insertedCharacterId = (insertedCharacters[0])['_id'];
+            insertedTag = (insertedTags[0]);
+            insertedTagId = insertedTag['_id'];
+            done();
+        });
     });
 
 
     // Removes test data
-    after(() => {
-        chai.request(server)
-            .delete(`/api/v1/characters/${insertedCharacterId}`);
-        chai.request(server)
-            .delete(`/api/v1/tags/${insertedTagId}`);
+    after((done) => {
+        const promises = [];
+        insertedCharacters.forEach(character => {
+            promises.push(chai.request(server).delete(`/api/v1/characters/${character['_id']}`));
+        });
+        insertedTags.forEach(tag => {
+            promises.push(chai.request(server).delete(`/api/v1/tags/${tag['_id']}`));
+        });
+        Promise.all(promises).then(() => {
+            done();
+        });
     });
 
 
@@ -167,6 +187,38 @@ describe('Character Tags', () => {
         });
     });
 
-    //TODO get all characters with tag title
+    describe('/GET characters?tagId=:tagId', () => {
+        
+        it('it should return all the characters with a certain tag Id', (done) => {
+            // Put tags in characters
+
+            const promises = [];
+
+            const firstCharacter = insertedCharacters[0];
+            promises.push(chai.request(server).post(`/api/v1/characters/${firstCharacter['_id']}/tags`).send({ tag: insertedTags[0]}));
+            const secondCharacter = insertedCharacters[1];
+            promises.push(chai.request(server).post(`/api/v1/characters/${secondCharacter['_id']}/tags`).send({ tag: insertedTags[0]}));
+            promises.push(chai.request(server).post(`/api/v1/characters/${secondCharacter['_id']}/tags`).send({ tag: insertedTags[1]}));
+            Promise.all(promises).then(() => {
+
+                const tagToSearch = insertedTags[0];
+                chai.request(server)
+                    .get(`/api/v1/characters?tagId=${tagToSearch['_id']}`)
+                    .end((err, res) => {
+                        res.should.have.status(200);
+                        res.body.should.be.a('object');
+                        res.body.should.have.property('status');
+                        res.body.should.have.property('characters');
+                        res.body.characters.should.be.a('array');
+                        res.body.characters.length.should.be.eql(2);
+                        done();
+                    });
+            });
+        });
+        
+        //TODO 1 seul résultat
+        //TODO pas de résultats
+        //TODO multiple tags Id
+    });
 
 });

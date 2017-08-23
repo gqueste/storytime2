@@ -31,6 +31,7 @@ module.exports = function(app) {
         .get((req, res) => {
             let parameters = {};
             parameters.name = req.query ? req.query.name : undefined;
+            parameters.tagId = req.query ? req.query.tagId : undefined;
             getCharacters(parameters).then(characters => {
                 res.status(200).json({
                     status: 'success',
