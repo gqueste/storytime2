@@ -188,8 +188,8 @@ describe('Character Tags', () => {
     });
 
     describe('/GET characters?tagId=:tagId', () => {
-        
-        it('it should return all the characters with a certain tag Id', (done) => {
+
+        before((done) => {
             // Put tags in characters
 
             const promises = [];
@@ -200,20 +200,54 @@ describe('Character Tags', () => {
             promises.push(chai.request(server).post(`/api/v1/characters/${secondCharacter['_id']}/tags`).send({ tag: insertedTags[0]}));
             promises.push(chai.request(server).post(`/api/v1/characters/${secondCharacter['_id']}/tags`).send({ tag: insertedTags[1]}));
             Promise.all(promises).then(() => {
-
-                const tagToSearch = insertedTags[0];
-                chai.request(server)
-                    .get(`/api/v1/characters?tagId=${tagToSearch['_id']}`)
-                    .end((err, res) => {
-                        res.should.have.status(200);
-                        res.body.should.be.a('object');
-                        res.body.should.have.property('status');
-                        res.body.should.have.property('characters');
-                        res.body.characters.should.be.a('array');
-                        res.body.characters.length.should.be.eql(2);
-                        done();
-                    });
+                done();
             });
+        });
+        
+        it('it should return all the characters with a certain tag Id', (done) => {
+            const tagToSearch = insertedTags[0];
+            chai.request(server)
+                .get(`/api/v1/characters?tagId=${tagToSearch['_id']}`)
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.be.a('object');
+                    res.body.should.have.property('status');
+                    res.body.should.have.property('characters');
+                    res.body.characters.should.be.a('array');
+                    res.body.characters.length.should.be.eql(2);
+                    done();
+                });
+        });
+
+        it('it should return no characters with a non present tag Id', (done) => {
+            const tagToSearch = insertedTags[0];
+            chai.request(server)
+                .get(`/api/v1/characters?tagId=${tagToSearch['_id']}1`)
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.be.a('object');
+                    res.body.should.have.property('status');
+                    res.body.should.have.property('characters');
+                    res.body.characters.should.be.a('array');
+                    res.body.characters.length.should.be.eql(0);
+                    done();
+                });
+        });
+
+        it('it should return all the characters with multiple tags Id', (done) => {
+            const tagToSearch1 = insertedTags[0];
+            const tagToSearch2 = insertedTags[1];
+            chai.request(server)
+                .get(`/api/v1/characters?tagId=${tagToSearch1['_id']}&tagId=${tagToSearch2['_id']}`)
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.be.a('object');
+                    res.body.should.have.property('status');
+                    res.body.should.have.property('characters');
+                    res.body.characters.should.be.a('array');
+                    res.body.characters.length.should.be.eql(1);
+                    done();
+                });
         });
         
         //TODO 1 seul résultat

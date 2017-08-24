@@ -31,9 +31,10 @@ function getCharacters(parameters) {
             };
         }
         if (parameters.tagId) {
+            let tagQuery = Array.isArray(parameters.tagId)? parameters.tagId: [parameters.tagId];
             query = {
-                'tags._id' : parameters.tagId
-            }
+                'tags._id' : { $all: tagQuery}
+            };
         }
         return charactersCollection.find(query).toArray();
     }).then(characters => {
