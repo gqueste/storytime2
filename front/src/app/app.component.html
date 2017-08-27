@@ -1,19 +1,29 @@
 <!--The content below is only a placeholder and can be replaced.-->
 <div style="text-align:center">
     <h1>
-        Welcome to {{title}}!
+        {{title}}
     </h1>
 </div>
 <div>
-    Here is the input and search things
+    <div class="row">
+        <div class="col-xs-3">
+            <div>
+                <input class="form-control" type="text">
+            </div>
+            <div>
+                <button class="btn btn-primary btn-xs btn-round" *ngFor="let possibleTag of possibleTags">{{possibleTag.title}}</button>
+            </div>
+        </div>
+        <div class="col-xs-9">
+            <button class="btn btn-primary btn-xs btn-round" *ngFor="let currentTag of currentTags">{{currentTag.title}}</button>
+        </div>
+    </div>
 </div>
 <div>
-    Here is the list of Characters corresponding to the search
     <h2>Character list</h2>
     <div class="list-group">
-        <button type="button" class="list-group-item" *ngFor="let character of characters">
-            <span class="badge" *ngFor="let tag of character.tags">{{tag.title}}</span>
-            <button type="button" class="btn btn-default btn-xs fa fa-pencil"></button>
+        <button type="button" class="list-group-item" *ngFor="let character of characters" (click)="onCharacterSelect(character)">
+            <span class="badge btn btn-primary btn-xs btn-round" *ngFor="let tag of character.tags">{{tag.title}}</span>
             {{character.name}}
         </button>
     </div>
