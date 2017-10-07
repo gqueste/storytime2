@@ -21,7 +21,7 @@ export class AppComponent implements OnInit {
     constructor(private http: HttpClient){
     }
 
-
+    selectedTagIndex = 0;
     title = 'StoryTime';
     tagSearched: string = '';
     allTags = [];
@@ -57,30 +57,57 @@ export class AppComponent implements OnInit {
         });
     }
 
-    isValidForSearch(key) {
-        return (key >= Keys.A && key <= Keys.Z) || key === Keys.BACKSPACE;
+    searchCharactersForCurrentTags(): void {
+        let tagsIdList = "";
+        this.currentTags.forEach((tag, index) => {
+            let str = "tagId=" + tag._id;
+            if (index < this.currentTags.length -1 ) {
+                str += "&";
+            }
+            tagsIdList += str;
+        });
+        this.http.get('http://localhost:3000/api/v1/characters?'+tagsIdList).subscribe(data => {
+            this.characters = data['characters'];
+        });
     }
 
     onSearchKey(event: any) {
-        console.log(event.keyCode);
-        //TODO arrowKeys select the correct Tag
-        if (event.keyCode === Keys.ENTER) {
-            console.log('ENTER PRESSED');
-            if (this.possibleTags.length > 0) {
-                const selectedTag = this.possibleTags[0];
-                if(!this.currentTags.find(element => element._id === selectedTag._id)) {
-                    this.currentTags.push(selectedTag);
-                }
-                this.possibleTags = [];
-                this.tagSearched = '';
+        if (event.keyCode === Keys.ARROW_RIGHT) {
+            if (this.selectedTagIndex + 1 < this.possibleTags.length) {
+                this.selectedTagIndex ++;
             }
-        } else if (this.isValidForSearch(event.keyCode)) {
+        } else if (event.keyCode === Keys.ARROW_LEFT) {
+            if (this.selectedTagIndex > 0) {
+                this.selectedTagIndex --;
+            }
+        } else if (event.keyCode === Keys.ENTER) {
+            if (this.possibleTags.length > 0) {
+                const selectedTag = this.possibleTags[this.selectedTagIndex];
+                this.onPossibleTagClick(selectedTag);
+            }
+        } else {
             let value = event.target.value;
+            this.selectedTagIndex = 0;
             if (value === '') {
                 this.possibleTags = [];
             } else {
                 this.searchTags(value);
             }
         }
+    }
+
+    onPossibleTagClick(tag: Tag) {
+        if(!this.currentTags.find(element => element._id === tag._id)) {
+            this.currentTags.push(tag);
+        }
+        this.possibleTags = [];
+        this.selectedTagIndex = 0;
+        this.tagSearched = '';
+        this.searchCharactersForCurrentTags();
+    }
+
+    onCurrentTagClick(tag: Tag) {
+        this.currentTags = this.currentTags.filter(element => tag._id != element._id);
+        this.searchCharactersForCurrentTags();
     }
 }

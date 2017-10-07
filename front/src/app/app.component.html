@@ -11,11 +11,11 @@
                 <input class="form-control" type="text" (keyup)="onSearchKey($event)" [(ngModel)]="tagSearched">
             </div>
             <div>
-                <button class="btn btn-xs btn-round" [ngClass]="first ? 'btn-success' : 'btn-primary'" *ngFor="let possibleTag of possibleTags; let first = first">{{possibleTag.title}}</button>
+                <button class="btn btn-xs btn-round" [ngClass]="i === selectedTagIndex ? 'btn-success' : 'btn-primary'" *ngFor="let possibleTag of possibleTags; let i = index" (click)="onPossibleTagClick(possibleTag)">{{possibleTag.title}}</button>
             </div>
         </div>
         <div class="col-xs-9">
-            <button class="btn btn-primary btn-xs btn-round" *ngFor="let currentTag of currentTags">{{currentTag.title}}</button>
+            <button class="btn btn-primary btn-xs btn-round" *ngFor="let currentTag of currentTags" (click)="onCurrentTagClick(currentTag)">{{currentTag.title}}</button>
         </div>
     </div>
 </div>
@@ -54,6 +54,6 @@
 
     <h2>Tag List</h2>
     <div>
-        <button class="btn btn-primary btn-xs btn-round" *ngFor="let allTag of allTags">{{allTag.title}}</button>
+        <button class="btn btn-primary btn-xs btn-round" *ngFor="let allTag of allTags" (click)="onPossibleTagClick(allTag)">{{allTag.title}}</button>
     </div>
 </div>
