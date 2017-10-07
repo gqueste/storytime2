@@ -44,7 +44,10 @@ module.exports = function(app) {
         })
         .post((req, res) => {
             const newCharacter = {
-                name: req.body.name
+                name: req.body.name,
+                physique: req.body.physique,
+                morale: req.body.morale,
+                histoire: req.body.histoire
             };
             insertCharacter(newCharacter).then(character => {
                 res.status(200).json({

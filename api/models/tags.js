@@ -27,7 +27,8 @@ function getTags(parameters) {
         let query = {};
         if (parameters.title) {
             query.title = {
-                $regex: parameters.title
+                $regex: parameters.title,
+                $options : "-i"
             };
         }
         return tagsCollection.find(query).toArray();
