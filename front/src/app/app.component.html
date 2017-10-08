@@ -14,8 +14,11 @@
                 <button class="btn btn-xs btn-round" [ngClass]="i === selectedTagIndex ? 'btn-success' : 'btn-primary'" *ngFor="let possibleTag of possibleTags; let i = index" (click)="onPossibleTagClick(possibleTag)">{{possibleTag.title}}</button>
             </div>
         </div>
-        <div class="col-xs-9">
+        <div class="col-xs-7">
             <button class="btn btn-primary btn-xs btn-round" *ngFor="let currentTag of currentTags" (click)="onCurrentTagClick(currentTag)">{{currentTag.title}}</button>
+        </div>
+        <div class="col-xs-2">
+            <button class="btn btn-block btn-warning" *ngIf="currentTags.length > 0" (click)="onResetTags()"><i class="fa fa-eraser" aria-hidden="true"></i> Reset current Tags</button>
         </div>
     </div>
 </div>
@@ -52,8 +55,34 @@
         </span>
     </div>
 
-    <h2>Tag List</h2>
+    <h2>Tag List <i class="fa fa-plus-square-o clickable" aria-hidden="true" data-toggle="modal" data-target="#addTagModal"></i></h2>
     <div>
         <button class="btn btn-primary btn-xs btn-round" *ngFor="let allTag of allTags" (click)="onPossibleTagClick(allTag)">{{allTag.title}}</button>
+    </div>
+</div>
+
+<!-- MODALS -->
+<div class="modal fade" id="addTagModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Ajouter un Tag</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label for="inputTagName" class="col-xs-4 control-label">Nom du tag</label>
+                        <div class="col-xs-8">
+                            <input type="text" class="form-control" id="inputTagName" placeholder="Nom" [(ngModel)]="tagNameToAdd" [ngModelOptions]="{standalone: true}">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="saveNewTag()">Sauvegarder</button>
+            </div>
+        </div>
     </div>
 </div>

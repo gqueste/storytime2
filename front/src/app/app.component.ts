@@ -25,6 +25,7 @@ export class AppComponent implements OnInit {
     title = 'StoryTime';
     tagSearched: string = '';
     allTags = [];
+    tagNameToAdd = '';
     characters: Character[] = [];
     possibleTags: Tag[] = [];
     currentTags: Tag[] = [];
@@ -54,6 +55,16 @@ export class AppComponent implements OnInit {
         console.log(search);
         this.http.get('http://localhost:3000/api/v1/tags?title='+search).subscribe(data => {
             this.possibleTags = data['tags'];
+        });
+    }
+    
+    addTag(title: string) {
+        let tag = {
+            title
+        };
+        this.http.post('http://localhost:3000/api/v1/tags', tag).subscribe(data => {
+            //TODO alert ?
+            this.getTags();
         });
     }
 
@@ -109,5 +120,14 @@ export class AppComponent implements OnInit {
     onCurrentTagClick(tag: Tag) {
         this.currentTags = this.currentTags.filter(element => tag._id != element._id);
         this.searchCharactersForCurrentTags();
+    }
+
+    onResetTags() {
+        this.currentTags = [];
+        this.getCharacters();
+    }
+
+    saveNewTag() {
+        this.addTag(this.tagNameToAdd);
     }
 }
