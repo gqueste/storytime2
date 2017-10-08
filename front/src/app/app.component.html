@@ -23,7 +23,7 @@
     </div>
 </div>
 <div>
-    <h2>Character list</h2>
+    <h2>Character list <i class="fa fa-plus-square-o clickable" aria-hidden="true" data-toggle="modal" data-target="#addCharacterModal"></i></h2>
 
     <div class="list-group">
 
@@ -62,6 +62,7 @@
 </div>
 
 <!-- MODALS -->
+<!-- MODAL : ADD TAG -->
 <div class="modal fade" id="addTagModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -82,6 +83,50 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
                 <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="saveNewTag()">Sauvegarder</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- MODAL : ADD CHARACTER -->
+<div class="modal fade" id="addCharacterModal" tabindex="-1" role="dialog" aria-labelledby="myCharacterLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myCharacterLabel">Ajouter un Personnage</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label for="inputCharacterName" class="col-xs-4 control-label">Nom</label>
+                        <div class="col-xs-8">
+                            <input type="text" class="form-control" id="inputCharacterName" placeholder="Nom" [(ngModel)]="characterNameToAdd" [ngModelOptions]="{standalone: true}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputCharacterPhysique" class="col-xs-4 control-label">Description Physique</label>
+                        <div class="col-xs-8">
+                            <textarea type="text" class="form-control" id="inputCharacterPhysique" placeholder="Fort,..." [(ngModel)]="characterPhysiqueToAdd" [ngModelOptions]="{standalone: true}"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputCharacterMentale" class="col-xs-4 control-label">Description Mentale</label>
+                        <div class="col-xs-8">
+                            <textarea type="text" class="form-control" id="inputCharacterMentale" placeholder="Simple,..." [(ngModel)]="characterMoraleToAdd" [ngModelOptions]="{standalone: true}"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputCharacterHistoire" class="col-xs-4 control-label">Histoire</label>
+                        <div class="col-xs-8">
+                            <textarea type="text" class="form-control" id="inputCharacterHistoire" placeholder="Est né de..." [(ngModel)]="characterHistoireToAdd" [ngModelOptions]="{standalone: true}"></textarea>
+                        </div>
+                    </div>
+                    <!-- TODO TAGS TO ADD TO THE NEW CHARACTER -->
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="saveNewCharacter()">Sauvegarder</button>
             </div>
         </div>
     </div>

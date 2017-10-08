@@ -30,6 +30,11 @@ export class AppComponent implements OnInit {
     possibleTags: Tag[] = [];
     currentTags: Tag[] = [];
 
+    characterNameToAdd = '';
+    characterPhysiqueToAdd = '';
+    characterMoraleToAdd = '';
+    characterHistoireToAdd = '';
+
     onCharacterSelect(element: Character): void {
         element.isActive = !element.isActive;
     }
@@ -65,6 +70,19 @@ export class AppComponent implements OnInit {
         this.http.post('http://localhost:3000/api/v1/tags', tag).subscribe(data => {
             //TODO alert ?
             this.getTags();
+        });
+    }
+
+    addCharacter(name: string, physique: string, morale: string, histoire: string) {
+        let character = {
+            name,
+            physique,
+            morale,
+            histoire
+        };
+        this.http.post('http://localhost:3000/api/v1/characters', character).subscribe(data => {
+            //TODO alert ?
+            this.getCharacters();
         });
     }
 
@@ -129,5 +147,9 @@ export class AppComponent implements OnInit {
 
     saveNewTag() {
         this.addTag(this.tagNameToAdd);
+    }
+
+    saveNewCharacter() {
+        this.addCharacter(this.characterNameToAdd, this.characterPhysiqueToAdd, this.characterMoraleToAdd, this.characterHistoireToAdd);
     }
 }
