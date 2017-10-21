@@ -36,7 +36,7 @@
                 <div class="col-xs-12">
                     <div class="btn-group" role="group">
                         <button type="button" class="btn btn-sm btn-primary"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Editer</button>
-                        <button type="button" class="btn btn-sm btn-danger"><i class="fa fa-times" aria-hidden="true"></i> Supprimer</button>
+                        <button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deleteCharacterModal"><i class="fa fa-times" aria-hidden="true"></i> Supprimer</button>
                     </div>
                 </div>
                 <div class="col-xs-6">
@@ -127,6 +127,24 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
                 <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="saveNewCharacter()">Sauvegarder</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- MODAL : DELETE CHARACTER -->
+<div class="modal fade" id="deleteCharacterModal" tabindex="-1" role="dialog" aria-labelledby="myCharacterDelLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myCharacterDelLabel">Supprimer un personnage</h4>
+            </div>
+            <div class="modal-body">
+                <p>Êtes vous sûr de vouloir supprimer le personnage {{currentSelectedCharacter && currentSelectedCharacter.name}} ?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal" (click)="onDeleteCharacterClick()">Supprimer</button>
             </div>
         </div>
     </div>

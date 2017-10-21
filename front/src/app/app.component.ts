@@ -34,9 +34,12 @@ export class AppComponent implements OnInit {
     characterPhysiqueToAdd = '';
     characterMoraleToAdd = '';
     characterHistoireToAdd = '';
+    
+    currentSelectedCharacter = null;
 
     onCharacterSelect(element: Character): void {
         element.isActive = !element.isActive;
+        this.currentSelectedCharacter = element;
     }
 
     ngOnInit(): void {
@@ -83,6 +86,13 @@ export class AppComponent implements OnInit {
         this.http.post('http://localhost:3000/api/v1/characters', character).subscribe(data => {
             //TODO alert ?
             this.getCharacters();
+        });
+    }
+
+    deleteCharacter(character: Character) {
+        this.http.delete('http://localhost:3000/api/v1/characters/'+character._id).subscribe(data => {
+            //TODO alert ?
+            this.searchCharactersForCurrentTags();
         });
     }
 
@@ -151,5 +161,9 @@ export class AppComponent implements OnInit {
 
     saveNewCharacter() {
         this.addCharacter(this.characterNameToAdd, this.characterPhysiqueToAdd, this.characterMoraleToAdd, this.characterHistoireToAdd);
+    }
+
+    onDeleteCharacterClick() {
+        this.deleteCharacter(this.currentSelectedCharacter);
     }
 }
