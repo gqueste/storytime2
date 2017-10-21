@@ -113,32 +113,48 @@ export class AppComponent implements OnInit {
     }
 
     saveNewTag() {
-        this.apiService.addTag(this.tagNameToAdd).then(data => {
-            //TODO alert ?
-            this.apiService.getTags().then((data) => {
+        this.apiService.addTag(this.tagNameToAdd)
+            .then(() => this.apiService.getTags())
+            .then((data) => {
                 this.allTags = data['tags'];
-            });
-        });
-    }
-
-    saveNewCharacter() {
-        this.apiService.addCharacter(this.characterNameToAdd, this.characterPhysiqueToAdd, this.characterMoraleToAdd, this.characterHistoireToAdd)
-            .then(() => {
-                //TODO alert ?
-                return this.apiService.getCharacters();
-            })
-            .then(data => {
-                this.characters = data['characters'];
             })
         ;
     }
 
+    saveNewCharacter() {
+        this.apiService.addCharacter(this.characterNameToAdd, this.characterPhysiqueToAdd, this.characterMoraleToAdd, this.characterHistoireToAdd)
+            .then((data) => {
+                let insertAllTagsPromises = [];
+                this.editCharacterCurrentTags.forEach((tag) => {
+                    insertAllTagsPromises.push(this.apiService.insertTagForCharacter(tag, data['character']));
+                });
+                return Promise.all(insertAllTagsPromises);
+            })
+            .then(() => this.apiService.searchCharactersForCurrentTags(this.currentTags))
+            .then(data => {
+                //TODO alert ?
+                this.characters = data['characters'];
+                this.resetEditModal();
+            })
+        ;
+    }
+
+    resetEditModal() {
+        this.possibleEditTags = [];
+        this.editCharacterCurrentTags = [];
+        this.selectedEditTagIndex = 0;
+        this.editTagSearched = '';
+        this.characterNameToAdd = '';
+        this.characterPhysiqueToAdd = '';
+        this.characterMoraleToAdd = '';
+        this.characterHistoireToAdd = '';
+    }
+
     onDeleteCharacterClick() {
         this.apiService.deleteCharacter(this.currentSelectedCharacter)
-            .then(() => {
+            .then(() => this.apiService.searchCharactersForCurrentTags(this.currentTags))
+            .then(data => {
                 //TODO alert ?
-                return this.apiService.searchCharactersForCurrentTags(this.currentTags);
-            }).then(data => {
                 this.characters = data['characters'];
             })
         ;
@@ -195,14 +211,17 @@ export class AppComponent implements OnInit {
     }
 
     onEditCharacterAddTag() {
-        this.apiService.addTag(this.editTagSearched).then(data => {
-            this.apiService.getTags().then((data) => {
+        this.apiService.addTag(this.editTagSearched)
+            .then(data => {
+                this.editCharacterCurrentTags.push(data['tag']);
+                this.possibleEditTags = [];
+                this.selectedEditTagIndex = 0;
+                this.editTagSearched = '';
+                return this.apiService.getTags();
+            })
+            .then((data) => {
                 this.allTags = data['tags'];
-            });
-            this.editCharacterCurrentTags.push(data['tag']);
-            this.possibleEditTags = [];
-            this.selectedEditTagIndex = 0;
-            this.editTagSearched = '';
-        });
+            })
+        ;
     }
 }

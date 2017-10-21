@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {Character} from './character';
+import {Tag} from './tag';
 
 import 'rxjs/Rx';
 
@@ -53,5 +54,9 @@ export class ApiService {
             tagsIdList += str;
         });
         return this.http.get('http://localhost:3000/api/v1/characters?'+tagsIdList).toPromise();
+    }
+
+    insertTagForCharacter(tag: Tag, character: Character) {
+        return this.http.post('http://localhost:3000/api/v1/characters/'+character._id+'/tags', { tag }).toPromise();
     }
 }
