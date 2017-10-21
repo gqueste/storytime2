@@ -37,6 +37,11 @@ export class AppComponent implements OnInit {
     
     currentSelectedCharacter = null;
 
+    editCharacterCurrentTags = [];
+    editTagSearched = '';
+    selectedEditTagIndex = 0;
+    possibleEditTags: Tag[] = [];
+
     onCharacterSelect(element: Character): void {
         element.isActive = !element.isActive;
         this.currentSelectedCharacter = element;
@@ -59,21 +64,15 @@ export class AppComponent implements OnInit {
         });
     }
 
-    searchTags(search: string): void {
-        console.log(search);
-        this.http.get('http://localhost:3000/api/v1/tags?title='+search).subscribe(data => {
-            this.possibleTags = data['tags'];
-        });
+    searchTags(search: string) {
+        return this.http.get('http://localhost:3000/api/v1/tags?title='+search);
     }
     
     addTag(title: string) {
         let tag = {
             title
         };
-        this.http.post('http://localhost:3000/api/v1/tags', tag).subscribe(data => {
-            //TODO alert ?
-            this.getTags();
-        });
+        return this.http.post('http://localhost:3000/api/v1/tags', tag);
     }
 
     addCharacter(name: string, physique: string, morale: string, histoire: string) {
@@ -130,7 +129,9 @@ export class AppComponent implements OnInit {
             if (value === '') {
                 this.possibleTags = [];
             } else {
-                this.searchTags(value);
+                this.searchTags(value).subscribe(data => {
+                    this.possibleTags = data['tags'];
+                });
             }
         }
     }
@@ -156,7 +157,10 @@ export class AppComponent implements OnInit {
     }
 
     saveNewTag() {
-        this.addTag(this.tagNameToAdd);
+        this.addTag(this.tagNameToAdd).subscribe(data => {
+            //TODO alert ?
+            this.getTags();
+        });
     }
 
     saveNewCharacter() {
@@ -165,5 +169,65 @@ export class AppComponent implements OnInit {
 
     onDeleteCharacterClick() {
         this.deleteCharacter(this.currentSelectedCharacter);
+    }
+
+    onPlusCharacterClick() {
+        this.editCharacterCurrentTags = this.currentTags.slice();
+    }
+
+
+    //TODO duplicated code
+    onCurrentEditTagClick(tag: Tag) {
+        this.editCharacterCurrentTags = this.editCharacterCurrentTags.filter(element => tag._id != element._id);
+    }
+
+    //TODO duplicated code
+    onEditSearchKey(event: any) {
+        if (event.keyCode === Keys.ARROW_RIGHT) {
+            if (this.selectedEditTagIndex + 1 < this.possibleEditTags.length) {
+                this.selectedEditTagIndex ++;
+            }
+        } else if (event.keyCode === Keys.ARROW_LEFT) {
+            if (this.selectedEditTagIndex > 0) {
+                this.selectedEditTagIndex --;
+            }
+        } else if (event.keyCode === Keys.ENTER) {
+            if (this.possibleEditTags.length > 0) {
+                const selectedTag = this.possibleEditTags[this.selectedEditTagIndex];
+                this.onPossibleEditTagClick(selectedTag, null);
+            }
+        } else {
+            let value = event.target.value;
+            this.selectedEditTagIndex = 0;
+            if (value === '') {
+                this.possibleEditTags = [];
+            } else {
+                this.searchTags(value).subscribe(data => {
+                    this.possibleEditTags = data['tags'];
+                });
+            }
+        }
+    }
+
+    //TODO duplicated code
+    onPossibleEditTagClick(tag: Tag, event: any) {
+        if(event === null || (event.clientX && event.clientX > 0)) { //workaround
+            if(!this.editCharacterCurrentTags.find(element => element._id === tag._id)) {
+                this.editCharacterCurrentTags.push(tag);
+            }
+            this.possibleEditTags = [];
+            this.selectedEditTagIndex = 0;
+            this.editTagSearched = '';
+        }
+    }
+
+    onEditCharacterAddTag() {
+        this.addTag(this.editTagSearched).subscribe(data => {
+            this.getTags();
+            this.editCharacterCurrentTags.push(data['tag']);
+            this.possibleEditTags = [];
+            this.selectedEditTagIndex = 0;
+            this.editTagSearched = '';
+        });
     }
 }

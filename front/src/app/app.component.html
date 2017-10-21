@@ -23,7 +23,7 @@
     </div>
 </div>
 <div>
-    <h2>Character list <i class="fa fa-plus-square-o clickable" aria-hidden="true" data-toggle="modal" data-target="#addCharacterModal"></i></h2>
+    <h2>Character list <i class="fa fa-plus-square-o clickable" aria-hidden="true" data-toggle="modal" data-target="#addCharacterModal" (click)="onPlusCharacterClick()"></i></h2>
 
     <div class="list-group">
 
@@ -121,7 +121,24 @@
                             <textarea type="text" class="form-control" id="inputCharacterHistoire" placeholder="Est né de..." [(ngModel)]="characterHistoireToAdd" [ngModelOptions]="{standalone: true}"></textarea>
                         </div>
                     </div>
-                    <!-- TODO TAGS TO ADD TO THE NEW CHARACTER -->
+                    <div class="form-group">
+                        <h4 class="text-center">Tags</h4>
+                        <div class="col-xs-6">
+                            <div>
+                                <input class="form-control" type="text" (keyup)="onEditSearchKey($event)" [(ngModel)]="editTagSearched" [ngModelOptions]="{standalone: true}">
+                            </div>
+                            <div>
+                                <button class="btn btn-xs btn-round" [ngClass]="i === selectedEditTagIndex ? 'btn-success' : 'btn-primary'" *ngFor="let possibleEditTag of possibleEditTags; let i = index" (click)="onPossibleEditTagClick(possibleEditTag, $event)">{{possibleEditTag.title}}</button>
+                            </div>
+                            <div *ngIf="editTagSearched != '' && possibleEditTags.length === 0">
+                                <button class="btn btn-small btn-success" (click)="onEditCharacterAddTag()"><i class="fa fa-plus-square-o" aria-hidden="true"></i> Ajouter ce Tag</button>
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+                            <p><strong>Current Tags</strong></p>
+                            <button class="btn btn-primary btn-xs btn-round" *ngFor="let editCharacterCurrentTag of editCharacterCurrentTags" (click)="onCurrentEditTagClick(editCharacterCurrentTag)">{{editCharacterCurrentTag.title}}</button>
+                        </div>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">
