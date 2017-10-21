@@ -19,12 +19,6 @@ const Keys = {
     providers: [ApiService]
 })
 
-//TODO Faire super méthode pour différencier Edit / Add
-//TODO pour edit, améliorer backend pour prendre les autres paramètres que le nom
-//TODO backend : tests pour POST et PUT characters avec tous les paramètres
-//TODO pour edit, comparer les tags et appeler les méthodes de suppression ou d'ajout des tags
-//TODO pour le POST et PUT Characters, gérer la liste des tags
-
 export class AppComponent implements OnInit {
 
     constructor(private apiService: ApiService){
