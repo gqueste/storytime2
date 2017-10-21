@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Tag} from './tag';
 import {Character} from './character';
-import {HttpClient} from "@angular/common/http";
+import {ApiService} from './api.service';
 
 const Keys = {
     ENTER: 13,
@@ -15,10 +15,13 @@ const Keys = {
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
-    styleUrls: ['./app.component.css']
+    styleUrls: ['./app.component.css'],
+    providers: [ApiService]
 })
+
 export class AppComponent implements OnInit {
-    constructor(private http: HttpClient){
+
+    constructor(private apiService: ApiService){
     }
 
     selectedTagIndex = 0;
@@ -48,63 +51,10 @@ export class AppComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.getTags();
-        this.getCharacters();
-    }
-
-    getTags(): void {
-        this.http.get('http://localhost:3000/api/v1/tags').subscribe(data => {
+        this.apiService.getTags().then(data => {
             this.allTags = data['tags'];
         });
-    }
-
-    getCharacters(): void {
-        this.http.get('http://localhost:3000/api/v1/characters').subscribe(data => {
-            this.characters = data['characters'];
-        });
-    }
-
-    searchTags(search: string) {
-        return this.http.get('http://localhost:3000/api/v1/tags?title='+search);
-    }
-    
-    addTag(title: string) {
-        let tag = {
-            title
-        };
-        return this.http.post('http://localhost:3000/api/v1/tags', tag);
-    }
-
-    addCharacter(name: string, physique: string, morale: string, histoire: string) {
-        let character = {
-            name,
-            physique,
-            morale,
-            histoire
-        };
-        this.http.post('http://localhost:3000/api/v1/characters', character).subscribe(data => {
-            //TODO alert ?
-            this.getCharacters();
-        });
-    }
-
-    deleteCharacter(character: Character) {
-        this.http.delete('http://localhost:3000/api/v1/characters/'+character._id).subscribe(data => {
-            //TODO alert ?
-            this.searchCharactersForCurrentTags();
-        });
-    }
-
-    searchCharactersForCurrentTags(): void {
-        let tagsIdList = "";
-        this.currentTags.forEach((tag, index) => {
-            let str = "tagId=" + tag._id;
-            if (index < this.currentTags.length -1 ) {
-                str += "&";
-            }
-            tagsIdList += str;
-        });
-        this.http.get('http://localhost:3000/api/v1/characters?'+tagsIdList).subscribe(data => {
+        this.apiService.getCharacters().then(data => {
             this.characters = data['characters'];
         });
     }
@@ -129,7 +79,7 @@ export class AppComponent implements OnInit {
             if (value === '') {
                 this.possibleTags = [];
             } else {
-                this.searchTags(value).subscribe(data => {
+                this.apiService.searchTags(value).then(data => {
                     this.possibleTags = data['tags'];
                 });
             }
@@ -143,32 +93,55 @@ export class AppComponent implements OnInit {
         this.possibleTags = [];
         this.selectedTagIndex = 0;
         this.tagSearched = '';
-        this.searchCharactersForCurrentTags();
+        this.apiService.searchCharactersForCurrentTags(this.currentTags).then(data => {
+            this.characters = data['characters'];
+        });
     }
 
     onCurrentTagClick(tag: Tag) {
         this.currentTags = this.currentTags.filter(element => tag._id != element._id);
-        this.searchCharactersForCurrentTags();
+        this.apiService.searchCharactersForCurrentTags(this.currentTags).then(data => {
+            this.characters = data['characters'];
+        });
     }
 
     onResetTags() {
         this.currentTags = [];
-        this.getCharacters();
+        this.apiService.getCharacters().then(data => {
+            this.characters = data['characters'];
+        });
     }
 
     saveNewTag() {
-        this.addTag(this.tagNameToAdd).subscribe(data => {
+        this.apiService.addTag(this.tagNameToAdd).then(data => {
             //TODO alert ?
-            this.getTags();
+            this.apiService.getTags().then((data) => {
+                this.allTags = data['tags'];
+            });
         });
     }
 
     saveNewCharacter() {
-        this.addCharacter(this.characterNameToAdd, this.characterPhysiqueToAdd, this.characterMoraleToAdd, this.characterHistoireToAdd);
+        this.apiService.addCharacter(this.characterNameToAdd, this.characterPhysiqueToAdd, this.characterMoraleToAdd, this.characterHistoireToAdd)
+            .then(() => {
+                //TODO alert ?
+                return this.apiService.getCharacters();
+            })
+            .then(data => {
+                this.characters = data['characters'];
+            })
+        ;
     }
 
     onDeleteCharacterClick() {
-        this.deleteCharacter(this.currentSelectedCharacter);
+        this.apiService.deleteCharacter(this.currentSelectedCharacter)
+            .then(() => {
+                //TODO alert ?
+                return this.apiService.searchCharactersForCurrentTags(this.currentTags);
+            }).then(data => {
+                this.characters = data['characters'];
+            })
+        ;
     }
 
     onPlusCharacterClick() {
@@ -202,7 +175,7 @@ export class AppComponent implements OnInit {
             if (value === '') {
                 this.possibleEditTags = [];
             } else {
-                this.searchTags(value).subscribe(data => {
+                this.apiService.searchTags(value).then(data => {
                     this.possibleEditTags = data['tags'];
                 });
             }
@@ -222,8 +195,10 @@ export class AppComponent implements OnInit {
     }
 
     onEditCharacterAddTag() {
-        this.addTag(this.editTagSearched).subscribe(data => {
-            this.getTags();
+        this.apiService.addTag(this.editTagSearched).then(data => {
+            this.apiService.getTags().then((data) => {
+                this.allTags = data['tags'];
+            });
             this.editCharacterCurrentTags.push(data['tag']);
             this.possibleEditTags = [];
             this.selectedEditTagIndex = 0;
