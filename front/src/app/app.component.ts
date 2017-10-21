@@ -19,6 +19,12 @@ const Keys = {
     providers: [ApiService]
 })
 
+//TODO Faire super méthode pour différencier Edit / Add
+//TODO pour edit, améliorer backend pour prendre les autres paramètres que le nom
+//TODO backend : tests pour POST et PUT characters avec tous les paramètres
+//TODO pour edit, comparer les tags et appeler les méthodes de suppression ou d'ajout des tags
+//TODO pour le POST et PUT Characters, gérer la liste des tags
+
 export class AppComponent implements OnInit {
 
     constructor(private apiService: ApiService){
@@ -37,6 +43,7 @@ export class AppComponent implements OnInit {
     characterPhysiqueToAdd = '';
     characterMoraleToAdd = '';
     characterHistoireToAdd = '';
+    characterIdToAdd = null;
     
     currentSelectedCharacter = null;
 
@@ -162,6 +169,11 @@ export class AppComponent implements OnInit {
 
     onPlusCharacterClick() {
         this.editCharacterCurrentTags = this.currentTags.slice();
+        this.characterIdToAdd = null;
+        this.characterNameToAdd = '';
+        this.characterPhysiqueToAdd = '';
+        this.characterMoraleToAdd = '';
+        this.characterHistoireToAdd = '';
     }
 
 
@@ -223,5 +235,14 @@ export class AppComponent implements OnInit {
                 this.allTags = data['tags'];
             })
         ;
+    }
+
+    onCharacterEditClick(character: Character) {
+        this.characterIdToAdd = character['_id'];
+        this.characterNameToAdd = character.name;
+        this.characterPhysiqueToAdd = character.physique;
+        this.characterMoraleToAdd = character.morale;
+        this.characterHistoireToAdd = character.histoire;
+        this.editCharacterCurrentTags = character.tags;
     }
 }

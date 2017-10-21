@@ -35,7 +35,7 @@
             <div *ngIf="character.isActive" class="row">
                 <div class="col-xs-12">
                     <div class="btn-group" role="group">
-                        <button type="button" class="btn btn-sm btn-primary"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Editer</button>
+                        <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#addCharacterModal" (click)="onCharacterEditClick(character)"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Editer</button>
                         <button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deleteCharacterModal"><i class="fa fa-times" aria-hidden="true"></i> Supprimer</button>
                     </div>
                 </div>
@@ -143,7 +143,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
-                <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="saveNewCharacter()">Sauvegarder</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="saveNewCharacter()">{{characterIdToAdd ? "Editer" : "Créer" }}</button>
             </div>
         </div>
     </div>
