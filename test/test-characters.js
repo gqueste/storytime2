@@ -50,7 +50,10 @@ describe('Characters', () => {
     describe('/POST characters', () => {
         it('it should POST a new character', (done) => {
             let character = {
-                name: "Test Character"
+                name: "Test Character",
+                physique: "a",
+                morale: "a",
+                histoire: "a"
             };
             chai.request(server)
                 .post('/api/v1/characters')
@@ -63,6 +66,14 @@ describe('Characters', () => {
                     res.body.character.should.be.a('object');
                     res.body.character.should.have.property('tags');
                     res.body.character.tags.should.be.a('array');
+                    res.body.character.should.have.property('name');
+                    res.body.character.name.should.be.eql(character.name);
+                    res.body.character.should.have.property('physique');
+                    res.body.character.physique.should.be.eql(character.physique);
+                    res.body.character.should.have.property('morale');
+                    res.body.character.morale.should.be.eql(character.morale);
+                    res.body.character.should.have.property('histoire');
+                    res.body.character.histoire.should.be.eql(character.histoire);
                     res.body.character.tags.length.should.be.eql(0);
                     insertedCharacterId = res.body.character['_id'];
                     done();
@@ -125,7 +136,10 @@ describe('Characters', () => {
     describe('/PUT characters/:id', () => {
         it('it should change the character', (done) => {
             let query = {
-                name: 'Test2'
+                name: 'Test2',
+                physique: "b",
+                morale: "b",
+                histoire: "b"
             };
             chai.request(server)
                 .put(`/api/v1/characters/${insertedCharacterId}`)
@@ -140,6 +154,12 @@ describe('Characters', () => {
                     res.body.character['_id'].should.be.eql(insertedCharacterId);
                     res.body.character.should.have.property('name');
                     res.body.character.name.should.be.eql(query.name);
+                    res.body.character.should.have.property('physique');
+                    res.body.character.physique.should.be.eql(query.physique);
+                    res.body.character.should.have.property('morale');
+                    res.body.character.morale.should.be.eql(query.morale);
+                    res.body.character.should.have.property('histoire');
+                    res.body.character.histoire.should.be.eql(query.histoire);
                     done();
                 });
         });

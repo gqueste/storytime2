@@ -86,6 +86,9 @@ module.exports = function(app) {
             const characterId = req.params.character_id;
             const params = {};
             if (req.body.name) params.name = req.body.name;
+            if (req.body.physique) params.physique = req.body.physique;
+            if (req.body.morale) params.morale = req.body.morale;
+            if (req.body.histoire) params.histoire = req.body.histoire;
             updateCharacter(characterId, params).then(character => {
                 res.status(200).json({
                     status: 'success',
