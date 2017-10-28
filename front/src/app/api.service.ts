@@ -29,6 +29,17 @@ export class ApiService {
         return this.http.post('http://localhost:3000/api/v1/characters', character).toPromise();
     }
 
+    updateCharacter(_id: string, name: string, physique: string, morale: string, histoire: string) {
+        let character = {
+            _id,
+            name,
+            physique,
+            morale,
+            histoire
+        };
+        return this.http.put('http://localhost:3000/api/v1/characters/'+character._id, character).toPromise();
+    }
+
     deleteCharacter(character: Character) {
         return this.http.delete('http://localhost:3000/api/v1/characters/'+character._id).toPromise();
     }
@@ -58,5 +69,9 @@ export class ApiService {
 
     insertTagForCharacter(tag: Tag, character: Character) {
         return this.http.post('http://localhost:3000/api/v1/characters/'+character._id+'/tags', { tag }).toPromise();
+    }
+
+    deleteTagForCharacter(tag: Tag, character: Character) {
+        return this.http.delete('http://localhost:3000/api/v1/characters/'+character._id+'/tags/'+tag._id).toPromise();
     }
 }

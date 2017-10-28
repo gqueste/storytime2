@@ -17,12 +17,8 @@ Single page application to list and quickly search between Characters descriptio
 
 ## TODO List
 ### Backend
-* Enhance PUT Characters to take into account other parameters than just the name (same parameters used for POST)
-* Add tests for POST and PUT characters with all parameters
 * POST and PUT characters : handle Tags list to avoid multiple queries
 ### Frontend
-* SuperMethod to differentiate Edit / Add
-* Edit : compare tags and call add and delete methods to add or remove tags
 * Get rid of duplicated code
 
 ## Deploy

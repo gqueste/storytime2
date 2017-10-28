@@ -140,6 +140,40 @@ export class AppComponent implements OnInit {
         ;
     }
 
+    editCharacter() {
+        this.apiService.updateCharacter(this.characterIdToAdd, this.characterNameToAdd, this.characterPhysiqueToAdd, this.characterMoraleToAdd, this.characterHistoireToAdd)
+            .then((data) => {
+                const editedCharacter = data['character'];
+                let promises = [];
+                this.editCharacterCurrentTags.forEach((tag) => {
+                    if (!editedCharacter.tags.find((characterTag) => characterTag._id === tag._id)) {
+                        promises.push(this.apiService.insertTagForCharacter(tag, editedCharacter));
+                    }
+                });
+                editedCharacter.tags.forEach((tag) => {
+                    if(!this.editCharacterCurrentTags.find((editTag) => editTag._id === tag._id)) {
+                        promises.push(this.apiService.deleteTagForCharacter(tag, editedCharacter));
+                    }
+                });
+                return Promise.all(promises);
+            })
+            .then(() => this.apiService.searchCharactersForCurrentTags(this.currentTags))
+            .then(data => {
+                //TODO alert ?
+                this.characters = data['characters'];
+                this.resetEditModal();
+            })
+        ;
+    }
+
+    saveCharacter() {
+        if (this.characterIdToAdd) {
+            this.editCharacter();
+        } else {
+            this.saveNewCharacter();
+        }
+    }
+
     resetEditModal() {
         this.possibleEditTags = [];
         this.editCharacterCurrentTags = [];
@@ -237,6 +271,6 @@ export class AppComponent implements OnInit {
         this.characterPhysiqueToAdd = character.physique;
         this.characterMoraleToAdd = character.morale;
         this.characterHistoireToAdd = character.histoire;
-        this.editCharacterCurrentTags = character.tags;
+        this.editCharacterCurrentTags = character.tags.slice();
     }
 }
