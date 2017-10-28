@@ -41,15 +41,15 @@
                 </div>
                 <div class="col-xs-6">
                     <h3 class="text-center">Description Physique</h3>
-                    <p>{{character.physique}}</p>
+                    <p><markdown>{{character.physique}}</markdown></p>
                 </div>
                 <div class="col-xs-6">
                     <h3 class="text-center">Description Mentale</h3>
-                    <p>{{character.morale}}</p>
+                    <p><markdown>{{character.morale}}</markdown></p>
                 </div>
                 <div class="col-xs-12">
                     <h3 class="text-center">Histoire</h3>
-                    <p>{{character.histoire}}</p>
+                    <p><markdown>{{character.histoire}}</markdown></p>
                 </div>
             </div>
         </span>
@@ -106,19 +106,19 @@
                     <div class="form-group">
                         <label for="inputCharacterPhysique" class="col-xs-4 control-label">Description Physique</label>
                         <div class="col-xs-8">
-                            <textarea type="text" class="form-control" id="inputCharacterPhysique" placeholder="Fort,..." [(ngModel)]="characterPhysiqueToAdd" [ngModelOptions]="{standalone: true}"></textarea>
+                            <textarea type="text" class="form-control" id="inputCharacterPhysique" placeholder="Fort,... Markdown disponible" [(ngModel)]="characterPhysiqueToAdd" [ngModelOptions]="{standalone: true}"></textarea>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="inputCharacterMentale" class="col-xs-4 control-label">Description Mentale</label>
                         <div class="col-xs-8">
-                            <textarea type="text" class="form-control" id="inputCharacterMentale" placeholder="Simple,..." [(ngModel)]="characterMoraleToAdd" [ngModelOptions]="{standalone: true}"></textarea>
+                            <textarea type="text" class="form-control" id="inputCharacterMentale" placeholder="Simple,...  Markdown disponible" [(ngModel)]="characterMoraleToAdd" [ngModelOptions]="{standalone: true}"></textarea>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="inputCharacterHistoire" class="col-xs-4 control-label">Histoire</label>
                         <div class="col-xs-8">
-                            <textarea type="text" class="form-control" id="inputCharacterHistoire" placeholder="Est né de..." [(ngModel)]="characterHistoireToAdd" [ngModelOptions]="{standalone: true}"></textarea>
+                            <textarea type="text" class="form-control" id="inputCharacterHistoire" placeholder="Est né de...  Markdown disponible" [(ngModel)]="characterHistoireToAdd" [ngModelOptions]="{standalone: true}"></textarea>
                         </div>
                     </div>
                     <div class="form-group">
